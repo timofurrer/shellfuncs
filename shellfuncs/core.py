@@ -21,11 +21,15 @@ import types
 import importlib.util
 import subprocess
 import functools
+from collections import namedtuple
 
 
 #: Holds the logger for shelldone
 logger = logging.getLogger('shelldone')
 logger.setLevel(logging.DEBUG)
+
+
+ShellFuncReturn = namedtuple('ShellFuncReturn', ['returncode', 'stdout', 'stderr'])
 
 
 class ShellScriptFinder:
@@ -78,8 +82,7 @@ class ShellModule(types.ModuleType):
 
         proc = subprocess.Popen(cmdline, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
-        ret = proc.wait()
-        return ret, stdout, stderr
+        return ShellFuncReturn(proc.returncode, stdout, stderr)
 
 
 # add ShellScriptFinder as meta path finder to sys
