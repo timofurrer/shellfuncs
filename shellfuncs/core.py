@@ -35,6 +35,8 @@ class ShellScriptFinder:
     """
     @classmethod
     def find_spec(cls, name, path=None, target=None):
+        # TODO: check if shell script exists
+        # TODO: check relative imports and directory walking
         loader = ShellScriptLoader()
         spec = importlib.util.spec_from_loader(name, loader)
         spec.script = name + '.sh'
@@ -58,7 +60,7 @@ class ShellModule(types.ModuleType):
         super().__init__(name)
 
     def __getattr__(self, name):
-        if name == '__get__':  # somehow invoked by functools.partialmethod. TODO: check waht's up
+        if name == '__get__':  # somehow invoked by functools.partialmethod. TODO: check waht's up?!
             return None
 
         func = functools.partial(self.execute_func, name)
@@ -68,6 +70,8 @@ class ShellModule(types.ModuleType):
         """
         Execute the shell function with the given name.
         """
+        # TODO: allow to specify which shell is used
+        # TODO: allow to specify environment which is used
         cmdline = '. ./{script} && {func} {args}'.format(
             script=self.script,
             func=name, args=' '.join("'{0}'".format(x) for x in args))
