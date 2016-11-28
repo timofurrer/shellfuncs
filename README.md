@@ -1,6 +1,8 @@
 # shellfuncs
 
 [![Build Status](https://travis-ci.com/timofurrer/shellfuncs.svg?token=qRcMyciKYsuEPapoF8ny&branch=master)](https://travis-ci.com/timofurrer/shellfuncs)
+[![PyPI package version](https://badge.fury.io/py/shellfuncs.svg)](https://badge.fury.io/py/shellfuncs)
+[![PyPI python versions](https://img.shields.io/pypi/pyversions/shellfuncs.svg)](https://pypi.python.org/pypi/shellfuncs)
 
 Python API to execute functions written in shell script.
 
@@ -57,7 +59,7 @@ import shellfuncs
 
 with shellfuncs.config(shell='/bin/bash'):
     from roulettes import russian_roulette
-    
+
 russian_roulette()  # the shell used will be /bin/bash
 ```
 
