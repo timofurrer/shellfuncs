@@ -27,8 +27,8 @@ returncode, stdout, stderr = russian_roulette()
 
 ## Why should I use that?
 
-* complex piping stuff might be easier to implement in shell script
 * use existing shell scripts in a pythonic way
+* complex piping stuff might be easier to implement in shell script
 * testing shell scripts is a pain in the a\*\* - with Python it'll be easier
 
 ## Installation
@@ -45,7 +45,7 @@ pip install shellfuncs
 
 The following configuration variables are available:
 
-* shell (defaults to /bin/sh)
+* shell (defaults to `/bin/sh`)
 * env (defaults to `os.environ`)
 
 ### Configuration via environment variables
