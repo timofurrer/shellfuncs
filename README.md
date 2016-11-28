@@ -25,6 +25,12 @@ from roulettes import russian_roulette
 returncode, stdout, stderr = russian_roulette()
 ```
 
+## Why should I use that?
+
+* complex piping stuff might be easier to implement in shell script
+* use existing shell scripts in a pythonic way
+* testing shell scripts is a pain in the a\*\* - with Python it'll be easier
+
 ## Installation
 
 The recommend way to install **shellfuncs** is to use `pip`:
