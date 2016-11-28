@@ -15,6 +15,7 @@ Got stdout: "Hello"
 Got stderr: "World"
 """
 
+import os
 import sys
 import logging
 import types
@@ -23,6 +24,7 @@ import subprocess
 import functools
 from pathlib import Path
 from collections import namedtuple
+from contextlib import contextmanager
 
 
 #: Holds the logger for shelldone.
@@ -31,6 +33,30 @@ logger.setLevel(logging.DEBUG)
 
 #: Holds a type which is used as return value for executed shell functions.
 ShellFuncReturn = namedtuple('ShellFuncReturn', ['returncode', 'stdout', 'stderr'])
+
+#: Holds the configuration stack
+config_stack = [
+    {
+        'shell': os.environ.get('SHELLFUNCS_DEFAULT_SHELL', '/bin/sh'),
+        'env': os.environ
+    }
+]
+
+
+@contextmanager
+def config(shell=None, env=None):
+    global config_stack
+
+    config = config_stack[-1].copy()
+
+    if shell is not None:
+        config['shell'] = shell
+    if env is not None:
+        config['env'] = env
+
+    config_stack.append(config)
+    yield
+    config_stack.pop()
 
 
 class ShellScriptFinder:
@@ -74,18 +100,19 @@ class ShellModule(types.ModuleType):
         func = functools.partial(self.execute_func, name)
         return func
 
-    def execute_func(self, name, *args):
+    def execute_func(self, name, *args, stdin=None, timeout=None):
         """
         Execute the shell function with the given name.
         """
-        # TODO: allow to specify which shell is used
-        # TODO: allow to specify environment which is used
+        config = config_stack[-1]
         cmdline = '. ./{script} && {func} {args}'.format(
             script=str(self.script),
             func=name, args=' '.join("'{0}'".format(x) for x in args))
 
-        proc = subprocess.Popen(cmdline, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = proc.communicate()
+        proc = subprocess.Popen(cmdline, shell=True, executable=config['shell'], env=config['env'],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                stdin=subprocess.PIPE if stdin else None)
+        stdout, stderr = proc.communicate(input=stdin, timeout=timeout)
         return ShellFuncReturn(proc.returncode, stdout, stderr)
 
 

@@ -4,4 +4,7 @@ from a sourced shell script.
 """
 
 
-from . import core
+from .core import config
+
+# Expose only specific stuff
+__all__ = ['config']
