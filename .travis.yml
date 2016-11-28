@@ -9,4 +9,4 @@ install:
   - python setup.py build sdist
   - pip install -r requirements-test.txt
 # command to run tests
-script: pytest tests/
+script: py.test tests/
