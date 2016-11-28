@@ -33,7 +33,7 @@ returncode, stdout, stderr = russian_roulette()
 
 ## Installation
 
-The recommend way to install **shellfuncs** is to use `pip`:
+The recommended way to install **shellfuncs** is to use `pip`:
 
 ```shell
 pip install shellfuncs
