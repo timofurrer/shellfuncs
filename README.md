@@ -22,3 +22,53 @@ from roulettes import russian_roulette
 
 returncode, stdout, stderr = russian_roulette()
 ```
+
+## Installation
+
+The recommend way to install **shellfuncs** is to use `pip`:
+
+```shell
+pip install shellfuncs
+```
+
+## Usage
+
+**shellfuncs** can be configured on different levels.
+
+The following configuration variables are available:
+
+* shell (defaults to /bin/sh)
+* env (defaults to `os.environ`)
+
+### Configuration via environment variables
+
+Set the default shell via `SHELLFUNCS_DEFAULT_SHELL` environment variable:
+
+```bash
+export SHELLFUNCS_DEFAULT_SHELL=/bin/bash
+```
+
+### Configuration via context manager
+
+Set the configuration block-wise with a context manager:
+
+```python
+import shellfuncs
+
+with shellfuncs.config(shell='/bin/bash'):
+    from roulettes import russian_roulette
+    
+russian_roulette()  # the shell used will be /bin/bash
+```
+
+### Configuration for specific function call
+
+Set the configuration when function is executed:
+
+```python
+import shellfuncs
+
+from roulettes import russian_roulette
+
+russian_roulette(shell='/bin/bash')
+```
