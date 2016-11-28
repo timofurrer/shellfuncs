@@ -21,14 +21,15 @@ import types
 import importlib.util
 import subprocess
 import functools
+from pathlib import Path
 from collections import namedtuple
 
 
-#: Holds the logger for shelldone
+#: Holds the logger for shelldone.
 logger = logging.getLogger('shelldone')
 logger.setLevel(logging.DEBUG)
 
-
+#: Holds a type which is used as return value for executed shell functions.
 ShellFuncReturn = namedtuple('ShellFuncReturn', ['returncode', 'stdout', 'stderr'])
 
 
@@ -39,11 +40,14 @@ class ShellScriptFinder:
     """
     @classmethod
     def find_spec(cls, name, path=None, target=None):
-        # TODO: check if shell script exists
+        script_path = Path('{0}.sh'.format(name))
+        if not script_path.exists():  # no such script found.
+            return None
+
         # TODO: check relative imports and directory walking
         loader = ShellScriptLoader()
         spec = importlib.util.spec_from_loader(name, loader)
-        spec.script = name + '.sh'
+        spec.script = script_path
         return spec
 
 
@@ -77,7 +81,7 @@ class ShellModule(types.ModuleType):
         # TODO: allow to specify which shell is used
         # TODO: allow to specify environment which is used
         cmdline = '. ./{script} && {func} {args}'.format(
-            script=self.script,
+            script=str(self.script),
             func=name, args=' '.join("'{0}'".format(x) for x in args))
 
         proc = subprocess.Popen(cmdline, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
