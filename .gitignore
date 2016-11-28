@@ -6,3 +6,10 @@ __pycache__/
 
 # python virtualenv
 env/
+
+# python testing
+.tox
+.cache/
+
+# python packaging
+*.egg-info

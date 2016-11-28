@@ -66,8 +66,13 @@ class ShellScriptFinder:
     """
     @classmethod
     def find_spec(cls, name, path=None, target=None):
-        script_path = Path('{0}.sh'.format(name))
+        print(name)
+        print(path)
+        print(target)
+
+        script_path = Path('{0}.sh'.format(name.replace('.', '/')))
         if not script_path.exists():  # no such script found.
+            print(script_path)
             return None
 
         # TODO: check relative imports and directory walking
@@ -80,7 +85,7 @@ class ShellScriptFinder:
 class ShellScriptLoader:
     @classmethod
     def create_module(cls, spec):
-        return ShellModule(spec.name, spec.script)
+        return ShellModule(spec.name, spec.script, config_stack[-1])
 
     @classmethod
     def exec_module(cls, module):
@@ -89,8 +94,9 @@ class ShellScriptLoader:
 
 
 class ShellModule(types.ModuleType):
-    def __init__(self, name, script):
+    def __init__(self, name, script, config):
         self.script = script
+        self.config = config
         super().__init__(name)
 
     def __getattr__(self, name):
@@ -100,16 +106,18 @@ class ShellModule(types.ModuleType):
         func = functools.partial(self.execute_func, name)
         return func
 
-    def execute_func(self, name, *args, stdin=None, timeout=None):
+    def execute_func(self, name, *args, shell=None, env=None, stdin=None, timeout=None):
         """
         Execute the shell function with the given name.
         """
-        config = config_stack[-1]
         cmdline = '. ./{script} && {func} {args}'.format(
             script=str(self.script),
             func=name, args=' '.join("'{0}'".format(x) for x in args))
 
-        proc = subprocess.Popen(cmdline, shell=True, executable=config['shell'], env=config['env'],
+        shell = shell if shell else self.config['shell']
+        env = env if env else self.config['env']
+
+        proc = subprocess.Popen(cmdline, shell=True, executable=shell, env=env,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                 stdin=subprocess.PIPE if stdin else None)
         stdout, stderr = proc.communicate(input=stdin, timeout=timeout)
