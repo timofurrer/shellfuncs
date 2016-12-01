@@ -5,7 +5,7 @@ from a sourced shell script.
 
 from .core import config
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 # Expose only specific stuff
 __all__ = ['config']
