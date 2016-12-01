@@ -66,13 +66,8 @@ class ShellScriptFinder:
     """
     @classmethod
     def find_spec(cls, name, path=None, target=None):
-        print(name)
-        print(path)
-        print(target)
-
         script_path = Path('{0}.sh'.format(name.replace('.', '/')))
         if not script_path.exists():  # no such script found.
-            print(script_path)
             return None
 
         # TODO: check relative imports and directory walking
