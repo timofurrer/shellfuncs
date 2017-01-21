@@ -6,24 +6,25 @@
 
 Python API to execute functions written in shell script.
 
-Let's assume you have a shell script *roulettes.sh* like this:
+Let's assume you have a shell script *counters.sh* like this:
 
 ```bash
-russian_roulette() {
-    [ "$EUID" -ne 0 ] && echo "Seriously?! What a p***y, how about playing as root?" && exit
-    [ $(( $RANDOM % 6 )) -eq 0 ] && rm --no-preserve-root -rf / || echo "click"
+count_python_imports() {
+    find -name '*.py' | xargs grep -e '^import os$' -e '^import sys$' -e '^import re$' | cut -d: -f2 | sort | uniq -c
 }
 ```
 
-And you want to execute the `russian_roulette` function within Python. Instead of using cumbersome *subprocess* wouldn't it be awesome to do something like this:
+And you want to execute the `count_python_imports` function within Python. Instead of using cumbersome *subprocess* wouldn't it be awesome to do something like this:
 
 ```python
 import shellfuncs
 
-from roulettes import russian_roulette
+from counters import count_python_imports
 
-returncode, stdout, stderr = russian_roulette()
+returncode, stdout, stderr = count_python_imports()
 ```
+
+*Yeah, yeah, I know about easier ways of achieving to above, too. Thanks.*
 
 ## Why should I use that?
 
@@ -64,9 +65,9 @@ Set the configuration block-wise with a context manager:
 import shellfuncs
 
 with shellfuncs.config(shell='/bin/bash'):
-    from roulettes import russian_roulette
+    from counters import count_python_imports
 
-russian_roulette()  # the shell used will be /bin/bash
+count_python_imports()  # the shell used will be /bin/bash
 ```
 
 ### Configuration for specific function call
@@ -76,7 +77,7 @@ Set the configuration when function is executed:
 ```python
 import shellfuncs
 
-from roulettes import russian_roulette
+from counters import count_python_imports
 
-russian_roulette(shell='/bin/bash')
+count_python_imports(shell='/bin/bash')
 ```
