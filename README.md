@@ -24,7 +24,7 @@ from counters import count_python_imports
 returncode, stdout, stderr = count_python_imports()
 ```
 
-*Yeah, yeah, I know about easier ways of achieving to above, too. Thanks.*
+*Yeah, yeah, I know about easier ways of achieving the above, too. Thanks.*
 
 ## Why should I use that?
 
