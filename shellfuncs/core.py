@@ -27,8 +27,8 @@ from collections import namedtuple
 from contextlib import contextmanager
 
 
-#: Holds the logger for shelldone.
-logger = logging.getLogger('shelldone')
+#: Holds the logger for shellfuncs.
+logger = logging.getLogger('shellfuncs')
 logger.setLevel(logging.DEBUG)
 
 #: Holds a type which is used as return value for executed shell functions.
