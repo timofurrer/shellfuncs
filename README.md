@@ -81,3 +81,7 @@ from counters import count_python_imports
 
 count_python_imports(shell='/bin/bash')
 ```
+
+***
+
+*<p align="center">This project is published under [MIT](LICENSE).<br>A [Timo Furrer](https://tuxtimo.me) project.<br>- :tada: -</p>*
