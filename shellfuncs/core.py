@@ -66,15 +66,25 @@ class ShellScriptFinder:
     """
     @classmethod
     def find_spec(cls, name, path=None, target=None):
-        script_path = Path('{0}.sh'.format(name.replace('.', '/')))
-        if not script_path.exists():  # no such script found.
-            return None
+        # import is of the form: `from path.to.script import`
+        if len(name.split('.')) > 1:
+            # need to convert any . to / for path finding
+            script_path = Path('{0}.sh'.format(name.replace('.', '/')))
+        else:
+            script_path = name + '.sh'
 
-        # TODO: check relative imports and directory walking
-        loader = ShellScriptLoader()
-        spec = importlib.util.spec_from_loader(name, loader)
-        spec.script = script_path
-        return spec
+        # look for requested script in python path
+        for p in sys.path:
+            # convert script name to abs path
+            place = str(os.path.join(p, script_path))
+            if os.path.exists(place):
+                # if we found the requested script, load it
+                loader = ShellScriptLoader()
+                spec = importlib.util.spec_from_loader(name, loader)
+                spec.script = place
+                return spec
+
+        return None
 
 
 class ShellScriptLoader:
@@ -105,7 +115,12 @@ class ShellModule(types.ModuleType):
         """
         Execute the shell function with the given name.
         """
-        cmdline = '. ./{script} && {func} {args}'.format(
+        # assume no leading slash means it isnt abspath
+        # therefore, we should prepend './' for relative execution
+        if self.script[0] != '/':
+            self.script = './' + self.script
+
+        cmdline = '. {script} && {func} {args}'.format(
             script=str(self.script),
             func=name, args=' '.join("'{0}'".format(x) for x in args))
 
